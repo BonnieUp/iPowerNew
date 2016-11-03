@@ -1,0 +1,22 @@
+//
+//  TKLoadingIndictorAppDelegate.h
+//  TKLoadingIndictor
+//
+//  Created by apple on 11-9-16.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@class TKLoadingIndictorViewController;
+
+@interface TKLoadingIndictorAppDelegate : NSObject <UIApplicationDelegate> {
+    UIWindow *window;
+    TKLoadingIndictorViewController *viewController;
+}
+
+@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) IBOutlet TKLoadingIndictorViewController *viewController;
+
+@end
+

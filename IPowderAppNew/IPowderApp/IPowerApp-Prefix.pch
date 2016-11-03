@@ -1,0 +1,215 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import "UIViewExt.h"
+    #import "PowerUtils.h"
+    #import "AppDelegate.h"
+#import "PowerDataService.h"
+#import "IPowerQueryViewController.h"
+#import "UIGestureRecognizer+BingArgs.h"
+#import "UILabel+BindArgs.h"
+#import "UIButton+BindArgs.h"
+//IOS版本
+#define IOS_LEVEL [[[UIDevice currentDevice] systemVersion] floatValue]
+//statusbar高度
+#define STATUS_BAR_HEIGHT 20
+//navigationBar高度
+#define NAVIGATION_BAR_HEIGHT 44
+//TABBAR高度
+#define TAB_BAR_HEIGHT 49
+
+//将RBG十六进制转换成IOS可用格式 UIColorFromRGB(0x00ff00)
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define RGBAcolor(r,g,b,a)  [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
+
+#define kSXColor(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
+#define kColor_blue   [UIColor colorWithRed:68/255.0f green:158/255.0f blue:226/255.0f alpha:1]
+#define kColor_blue   [UIColor colorWithRed:68/255.0f green:158/255.0f blue:226/255.0f alpha:1]
+
+
+#define kSystemFont(size) [UIFont systemFontOfSize:size]
+
+#define kFloatToString(value) [NSNumber numberWithFloat:value].stringValue
+
+
+#define kIsNull(str) ((str.length == 0) ? YES : NO)
+#define kObjIsNull(obj) (kSubclassOfClass(obj, [NSNull class]) || nil == obj) ? YES : NO
+#define kStringOrNil(string) (string && string.length>0)? string: @""
+#define kStringOrOther(string,string1) (string && string.length>0)?string:string1
+
+#define kScreenWidth                            [[UIScreen mainScreen]bounds].size.width
+#define kScreenHeight                           [[UIScreen mainScreen]bounds].size.height
+#define kWindowsWidth                           self.view.frame.size.width
+#define kWindowsHeight                          self.view.frame.size.height
+#define kContentHeight                          kWindowsHeight - 64
+#define kColorWithHex(rgbValue) \
+[UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16)) / 255.0 \
+green:((float)((rgbValue & 0xFF00) >> 8)) / 255.0 \
+blue:((float)(rgbValue & 0xFF)) / 255.0 alpha:1.0]
+
+#define kColor_Red       kColorWithHex(0xe13a3b)
+#define kColor_GrayLight kColorWithHex(0xE8E8E8)
+
+#define kSXColor(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
+#define kSystemFont(size) [UIFont systemFontOfSize:size]
+
+#define kSXImage(imageName) [UIImage imageNamed: imageName]
+
+//获取设备的物理高度
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
+
+//获取设备的物理宽度
+#define ScreenWidth [UIScreen mainScreen].bounds.size.width
+#define WIDTH [UIScreen mainScreen].bounds.size.width
+
+//测试用accessToken
+#define AccessToken [(AppDelegate *)[[UIApplication sharedApplication] delegate] token]
+
+#define kGetViewController(storyboard, identifier) [[UIStoryboard storyboardWithName:storyboard bundle:[NSBundle mainBundle]]instantiateViewControllerWithIdentifier:identifier]
+
+//测试服务地址
+//#define BaseUrl @"http://test.telecomsh.cn:9091/ywglapp"
+//正式服务器地址
+#define BaseUrl @"http://main.telecomsh.cn/ywglapp"
+
+//版本更新
+#define UPDATE_URL @"http://main.telecomsh.cn/ywglappUpdate/release/plist/ipower.plist"
+//#define UPDATE_URL @"http://test0.telecomsh.cn:9091/ywglappUpdate/release/plist/ipower.plist"
+
+
+
+
+//获取任务数量
+#define getTaskAmountUrl @"/DKTask/GetDKTaskAmount.json"
+//获取站点信息
+#define getSiteInfoUrl @"/DKTask/GetDKCurSite.json"
+//获取任务列表(一级)
+#define getTaskAmountBySiteUrl @"/DKTask/GetDKTaskAmountBySite.json"
+//获取任务数据(二级)
+#define getTaskInfoUrl @"/DKTask/GetDKTaskByKind.json"
+//获取进行中的任务
+#define getTaskDetailUrl @"/DKTask/GetDKTaskContent.json"
+//开始维护
+#define startProcessTaskUrl @"/DKTask/ProcessDKTaskStart.json"
+//结束维护
+#define stopProcessTaskUrl @"/DKTask/ProcessDKTaskStop.json"
+//获取告警列表
+#define getAlarmInfoUrl @"/DKTask/GetStationAlarmData.json"
+//获取实时告警信息
+#define getRuntimeAlarmInfo @"/DKTask/GetAlarmDataDetail.json"
+//获取实时告警数据
+#define getRuntimeAlarmData @"/Fault/GetDKFaultDetail.json"
+//获取用户所能访问的区局信息
+#define getUserRegionDataUrl @"/RscInspection/GetUserRegionData.json"
+//获取指定区局下相关站点数据
+#define getUserStationDataUrl @"/RscInspection/GetUserStationData.json"
+//获取设备清单数据
+#define getUserDeviceDataUrl @"/RscInspection/GetUserDeviceListData.json"
+//获取指定站点下的机房数据
+#define getUserRoomDataUrl @"/RscInspection/GetUserRoomData.json"
+//获取指定站点下的动力系统数据
+#define getUserPowerSystemDataUrl @"/RscInspection/GetUserPowerSystemData.json"
+//获取指定设备大类下的设备子类列表
+#define getSubDeviceUrl @"/RscInspection/GetDeviceSubClassData.json"
+//获取设备的公共信息
+#define getDeviceCommonInfoUrl @"/RscInspection/GetDeviceCommonInfoData.json"
+//获取设备的扩展信息
+#define getDeviceExtendInfoUrl @"/RscInspection/GetDeviceExtendInfoData.json"
+//获取设备的端子信息
+#define getDeviceConnectorInfoUrl @"/RscInspection/GetDeviceConnectorData.json"
+//获取设备状态数据
+#define getDeviceStatusInfoUrl @"/RscInspection/GetDeviceStatusData.json"
+//获取设备类型数据
+#define getDeviceTypeDataUrl @"/RscInspection/GetDeviceTypeData.json"
+//获取某类设备的前十位厂家数据(PR)
+#define getDeviceBFDataUrl @"/RscInspection/GetDeviceBfTenMakerData.json"
+//保存设备相关数据
+#define saveDevicePropertyUrl @"/RscInspection/SaveDeviceInfoDate.json"
+//提交巡检报告
+#define saveDeviceReportUrl @"/RscInspection/SaveCheckInfoDate.json"
+//获取当前告警清单数据
+#define getDKCurrentAlarmDataUrl @"/MyNetManage/GetCurrentAlarmData.json"
+//获取历史告警清单数据
+#define getHistoryAlarmDataUrl @"/MyNetManage/GetHistoryAlarmData.json"
+//获取用户区局数据
+#define getUserAreaDataUrl @"/MyNetManage/GetUserAreaData.json"
+//获取重大告警类型分组数据
+#define getFatalAlarmGroupDataUrl @"/MyNetManage/GetFatalAlarmGroupData.json"
+//获取频繁告警数据
+#define getFrequentAlarmDataUrl @"/MyNetManage/GetFrequentAlarmData.json"
+//获取故障清单数据
+#define getDeviceFaultDataUrl @"/MyNetManage/GetDeviceFaultData.json"
+//获取故障详情
+#define getDeviceFaultDetailUrl @"/MyNetManage/GetDeviceFaultDetail.json"
+//获取故障流转信息
+#define getDeviceFaultTransferUrl @"/MyNetManage/GetFaultTransferData.json"
+//获取重大告警列表数据
+#define getCurrentAlarmDataUrl @"/MyNetManage/GetCurrentAlarmData.json"
+//获取设备大类列表
+#define getDeviceClassDataUrl @"/MyNetManage/GetDeviceClassData.json"
+//获取故障级别
+#define getFaultLevelDataUrl @"/MyNetManage/GetDeviceFaultLevelData.json"
+//获取各类维护等级统计数据接口
+#define getPRServiceLevelDataUrl @"/dynamic/dk/GetPrServiceLevelData.json"
+//获取蓄电池测试清单数据
+#define getPrBatteryTestDataUrl @"/dynamic/dk/GetPrBatteryTestData.json"
+//获取蓄电池放电测试详情数据
+#define getPrBatteryDischargeTestDetailUrl @"/dynamic/dk/GetPrBatteryDischargeTestDetail.json"
+//获取蓄电池内阻测试详情数据
+#define getPrBatteryInnerResistanceTestDetailUrl @"/dynamic/dk/GetPrBatteryInnerResistanceTestDetail.json"
+//获取指定状态的核查计划数据
+#define getPrCheckPlanDataUrl @"/dynamic/dk/GetPrCheckPlanData.json"
+//获取指定巡查计划下指定状态的核查站点数据
+#define getPrCheckStationDataUrl @"/dynamic/dk/GetPrCheckStationData.json"
+//认领/开始执行指定的核查任务
+#define excutePrCheckStationUrl @"/dynamic/dk/ExecutePrCheckStation.json"
+//获取指定核查站点的详情数据
+#define getPrCheckStationDetailUrl @"/dynamic/dk/GetPrCheckStationDetail.json"
+//提交指定核查站点的核查结果数据
+#define savePrCheckResultUrl  @"/dynamic/dk/SavePrCheckResult.json"
+//周期维护模块名称
+#define module_zhouqiweihu @"iPowerTask"
+//资源巡检模块名称
+#define module_ziyuanxunjian @"iPowerPR"
+//动力网管模块名称
+#define module_dongliwangguan @"iPowerDK"
+//资源核查
+#define module_ziyuanhecha @"iPowerPrCheck"
+//动力系统供电等级管理
+#define module_gongdiandengji @"iPowerPrMaintLevel"
+//蓄电池测试管理
+#define module_xudianchiguanli @"iPowerPrBatteryTest"
+//动环报表
+#define module_donghuanbaobiao @"iPowerDKReport"
+
+
+#pragma mark ----  dinglangping
+//DK质量管控及分析报表
+//1.获取模块清单类型数据
+#define GETDKREPORTTYPELISTDATA @"/dynamic/dk/GetDKReportTypeListData.json"
+
+//2.获取指定报表类型的查询条件
+#define GETDKQUERYREPORTTYPEDATA @"/dynamic/dk/GetDKReportTypeQueryData.json"
+
+//3.获取报表数据，显示在报表
+#define GETDKREPORTLISTDATA @"/dynamic/dk/GetDKReportTypeRptData.json"
+
+
+
+
+//-------通知
+#define KSiteChanged @"kSiteChangedNotification"
+
+#endif
